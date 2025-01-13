@@ -1,0 +1,1 @@
+searchState.loadedDescShard("cmp", 0, "Macro which is mostly useful when writing <code>assert!</code> tests on …")
