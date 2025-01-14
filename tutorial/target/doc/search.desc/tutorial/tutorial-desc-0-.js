@@ -1,1 +1,0 @@
-searchState.loadedDescShard("tutorial", 0, "")
