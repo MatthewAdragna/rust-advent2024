@@ -6,7 +6,6 @@ fn main(){
     println!("Guess the number");
     
 
-    let tupes: (i32,f64,char) = (55,21.0,'a');
 
     let secret_num:i32 = rand::thread_rng().gen_range(1..=100);
     
