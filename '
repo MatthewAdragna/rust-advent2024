@@ -1,0 +1,46 @@
+
+let validArguments = Array.length Sys.argv >= 2
+let filePath = if validArguments then  Sys.argv.(1) else "../source/input"
+let wsTuple x = [" " ^ x] 
+let rec printTuples tuplesIn = 
+    match tuplesIn with
+      | a :: b -> Printf.printf "%s" a; printTuples b
+      | [] -> ()
+let rec unzip stream currentList =
+    try 
+      let line = input_line stream
+      in unzip stream ((wsTuple line) @ currentList)
+    with
+    | End_of_file -> currentList
+    | e -> close_in_noerr stream ; raise e 
+
+let getTuples path = let file = open_in path in unzip file [""]
+let printStringArr arg = 
+  for i = 0 to Array.length arg -1 do 
+      Printf.printf "[%i] %s \n" i arg.(i)
+  done;
+let () = 
+    let _ = printStringArr Sys.argv
+  printTuples (getTuples filePath);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
