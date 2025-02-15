@@ -17,13 +17,27 @@ let lineToIntList l = let lineList = String.split_on_char ' ' l in
     | x :: rest -> if x = "" then aux ([(int_of_string x)] @ listOut) rest else aux listOut rest
     | [] -> listOut 
     in aux [] lineList
-let getSafety l =
-  let aux lIn lOut = 
-    match lIn with 
-    | x :: rest -> aux (rest) ((safetyDance x) @ lOut)
-    | [] -> lOut
-  in 
-    aux l []
+  
+let linesToIntIntList l = 
+  let rec aux totalList l =
+    match l with
+      | [] -> totalList
+      | s :: rest -> aux ((lineToIntList s) @ totalList) rest
+  in aux [] l
+let rec badAdventure listIn =
+   match listIn with
+  |a :: b :: rest -> 
+  let diff = a - b in
+    if diff > 0 || (abs diff) > 2 then 0 else badAdventure ([b] @  rest)
+  | _  -> 1 
+
+
+let rec goodAdventure listIn =
+   match listIn with
+  |a :: b :: rest -> 
+  let diff = a - b in
+    if diff < 0 || (abs diff) > 2 then 0 else goodAdventure ([b] @  rest)
+  | _  -> 1 
 
 
 let safetyDance x =  
@@ -40,20 +54,20 @@ let safetyDance x =
   else
     goodAdventure ([b] @ rest)
 
-let rec badAdventure listIn =
-   match listIn with
-  |a :: b :: rest -> 
-  let diff = a - b in
-    if diff > 0 || (abs diff) > 2 then 0 else badAdventure ([b] @  rest)
-  | _  -> 1 
+let getSafety l =
+  let rec aux lIn lOut = 
+    match lIn with 
+    | x :: rest -> aux (rest) ([(safetyDance x)] @ lOut)
+    | [] -> lOut
+  in 
+    aux l []
+
  
 
 
 
 
 let () = 
-  let safeLevels = List.fold_left (+) 0 (getSafety linesIn)
   let linesIn = lines file in
-      in print_endline (string_of_int safeLevels);
-
-
+  
+  let safeLevels = List.fold_left (+) 0 (getSafety (linesIn)) in in print_endline (string_of_int safeLevels);
