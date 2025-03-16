@@ -13,7 +13,7 @@ let printStrArr arrIn =
   done
 
 let default_file = "input"
-
+let char_is base against = base = against
 let char_is_digit chr =
 match chr with 
   | '0' .. '9' -> true
@@ -30,11 +30,12 @@ let intlist_of_str strIn = String.split_on_char ' ' strIn |> map int_of_string
 let parse_number str = 
   let rec form_string size acc str =
     match str with 
-    | [] -> 
-        if acc = "" then None else Some( int_of_string( acc ))
     | chr :: rest when size < 3 && char_is_digit chr -> 
-        form_string (size + 1) ("" ^ acc) rest
-(* (String.make 1 chr  ) *)
+       form_string (size + 1) ("" ^ acc) rest
+    | chr :: _ when char_is chr "," && size < 3:
+    | _ -> 
+        if acc = "" then None else Some( int_of_string( acc ))
+    in form_string 0 "" str
 
 
 
