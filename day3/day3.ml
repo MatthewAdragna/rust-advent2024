@@ -56,20 +56,18 @@ let explode s =
     if i < 0 then l else
     expl (i - 1) (s.[i] :: l) in
   expl (String.length s - 1) [];;
-let implode l =
-String.concat "" (map ( String.make 1 ) l )
-
-let getFirstDigit str =
+let implode l =  String.concat "" (map ( String.make 1 ) l )
+ let getFirstDigit str =
     match str with 
-    | a :: b :: c :: "," :: rest -> ( int_of_string_opt (a^b^c) , rest )
-    | a :: b :: "," :: rest -> ( int_of_string_opt (a^b) , rest )
-    | a  :: "," :: rest -> ( int_of_string_opt (a) , rest )
+    | a :: b :: c :: ',' :: rest -> ( int_of_string_opt (implode [a;b;c]) , rest )
+    | a :: b :: ',' :: rest -> ( int_of_string_opt (implode [a;b]) , rest )
+    | a  :: ',' :: rest -> ( int_of_string_opt (implode [a]) , rest )
     | _ -> (None, str)
 let getLastDigit str =
     match str with 
-    | a :: b :: c :: ")" :: rest -> ( int_of_string_opt (a^b^c) , rest )
-    | a :: b :: ")" :: rest -> ( int_of_string_opt (a^b) , rest )
-    | a  :: ")" :: rest -> ( int_of_string_opt (a) , rest )
+    | a :: b :: c :: ')' :: rest -> ( int_of_string_opt (implode [a;b;c]) , rest )
+    | a :: b :: ')' :: rest -> ( int_of_string_opt (implode [a;b]) , rest )
+    | a  :: ')' :: rest -> ( int_of_string_opt (implode [a]), rest )
     | _ -> (None, str)
 
     
@@ -77,13 +75,20 @@ let getLastDigit str =
   let multStr str = identity str
   let findMultStrs str = let expl = explode str in 
     let rec findCandidates acc strLeft =
-    match strLeft with 
-    | "m"::"u"::"l"::"("::rest -> let first :: rest = 
-      match (getFirstDigit rest) with
-    | Some(a) -> a
-    | None -> None
-      |
-  let part1 = entireFile |> findMultStrs
+      match strLeft with 
+      | [] -> acc
+      | 'm'::'u'::'l'::'('::rest -> 
+            ( match (getFirstDigit rest) with
+                | (Some(givenFirst), rest) -> 
+                    (match getLastDigit rest with
+                    | (Some(givenLast), rest) ->  findCandidates ( acc + (givenLast * givenFirst) ) rest
+                    | (None,rest) -> findCandidates acc rest) 
+                | (_,rest) -> findCandidates acc rest ) 
+      | arb :: rest -> findCandidates acc rest
+    in findCandidates 0 expl
+
+           
+  let part1 = file |> entireFile |> findMultStrs |> print_int
   let part1 = 1
 
   let () = p "Main:/n"; p "Part 1:"; p (string_of_int part1);
