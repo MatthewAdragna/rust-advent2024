@@ -1,11 +1,11 @@
-  (* # Begin standard *)
+(* # Begin standard *)
 let flatten_tailed list_in =
-  let rec aux l acc =
+let rec aux l acc =
   match l with 
-    | [] -> acc 
-    | elem :: rest -> aux rest ( acc @ elem) 
-  in 
-  aux list_in []
+  | [] -> acc 
+  | elem :: rest -> aux rest ( acc @ elem) 
+in 
+aux list_in []
 let map = List.map 
 let identity x = x 
 let p = print_endline
@@ -37,58 +37,64 @@ let printBoolListSingle l = ( printListSingle string_of_bool ) l; l
 let printFlatListFunct conversion l = l |> flatten_tailed |> (printListSingle conversion) ; l
 let printFlatIntList = (printFlatListFunct string_of_int)
 let intlist_of_str strIn = String.split_on_char ' ' strIn |> map int_of_string 
-  
+
 let linesToIntList2 (l:  string list) = map intlist_of_str l
 (* end standard *)
-
-(* let parse_number str =  *)
-(*   let rec form_string size acc str = *)
-(*     match str with  *)
-(*     | chr :: rest when size < 3 && char_is_digit chr ->  *)
-(*        form_string (size + 1) ("" ^ acc) rest *)
-(*     | chr :: _ when char_is chr "," && size < 3: *)
-(*     | _ ->  *)
-(*         if acc = "" then None else Some( int_of_string( acc )) *)
-(*     in form_string 0 "" str *)
-(**)
+let charListAreDigits chrList = chrList |> map (fun x -> 
+  match x with 
+  | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' -> true
+  | _ -> false
+)  
+  |> List.fold_left (&&) true
 let explode s =
   let rec expl i l =
     if i < 0 then l else
-    expl (i - 1) (s.[i] :: l) in
+      expl (i - 1) (s.[i] :: l) in
   expl (String.length s - 1) [];;
 let implode l =  String.concat "" (map ( String.make 1 ) l )
- let getFirstDigit str =
-    match str with 
-    | a :: b :: c :: ',' :: rest -> ( int_of_string_opt (implode [a;b;c]) , rest )
-    | a :: b :: ',' :: rest -> ( int_of_string_opt (implode [a;b]) , rest )
-    | a  :: ',' :: rest -> ( int_of_string_opt (implode [a]) , rest )
-    | _ -> (None, str)
+let getFirstDigit str =
+  match str with 
+  | a  :: ',' :: rest when (charListAreDigits [a]) -> ( int_of_string_opt (implode [a]) , rest )
+  | a :: b :: ',' :: rest when (charListAreDigits [a;b]) -> ( int_of_string_opt (implode [a;b]) , rest )
+  | a :: b :: c :: ',' :: rest  when (charListAreDigits [a;b;c])-> ( int_of_string_opt (implode [a;b;c]) , rest )
+  | _ -> (None, str)
 let getLastDigit str =
-    match str with 
-    | a :: b :: c :: ')' :: rest -> ( int_of_string_opt (implode [a;b;c]) , rest )
-    | a :: b :: ')' :: rest -> ( int_of_string_opt (implode [a;b]) , rest )
-    | a  :: ')' :: rest -> ( int_of_string_opt (implode [a]), rest )
-    | _ -> (None, str)
+  match str with 
+  | a  :: ')' :: rest when (charListAreDigits [a]) -> ( int_of_string_opt (implode [a]), rest )
+  | a :: b :: ')' :: rest when (charListAreDigits [a;b]) -> ( int_of_string_opt (implode [a;b]) , rest )
+  | a :: b :: c :: ')' :: rest when (charListAreDigits [a;b;c]) -> ( int_of_string_opt (implode [a;b;c]) , rest )
+  | _ -> (None, str)
+let sti = string_of_int
+let genPair x y =("("^ sti x   ^ "," ^  sti y  ^ ")") 
+let pPair x y = p (genPair x y)     
+let findMultStrs str = let expl = explode str in
+  let rec findCandidates acc strLeft =
+    match strLeft with 
+    | [] -> acc
+    | 'm'::'u'::'l'::'('::rest -> 
+      ( match (getFirstDigit rest) with
+        | (Some(givenFirst), rest) -> 
+          (match getLastDigit rest with
+            | (Some(givenLast), rest) -> 
+              findCandidates ( acc @ [givenLast,givenFirst] ) rest
+            | (None,rest) -> findCandidates acc rest) 
+        | (_,rest) -> findCandidates acc rest ) 
+    | arb :: rest -> findCandidates acc rest
+  in findCandidates [] expl
 
-    
-    
-  let multStr str = identity str
-  let findMultStrs str = let expl = explode str in 
-    let rec findCandidates acc strLeft =
-      match strLeft with 
-      | [] -> acc
-      | 'm'::'u'::'l'::'('::rest -> 
-            ( match (getFirstDigit rest) with
-                | (Some(givenFirst), rest) -> 
-                    (match getLastDigit rest with
-                    | (Some(givenLast), rest) ->  findCandidates ( acc + (givenLast * givenFirst) ) rest
-                    | (None,rest) -> findCandidates acc rest) 
-                | (_,rest) -> findCandidates acc rest ) 
-      | arb :: rest -> findCandidates acc rest
-    in findCandidates 0 expl
-
-           
-  let part1 = file |> entireFile |> findMultStrs |> print_int
-  let part1 = 1
-
-  let () = p "Main:/n"; p "Part 1:"; p (string_of_int part1);
+let testCase = "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))"
+let fullFileStr = file |> entireFile 
+let testLists =
+  [
+    ( "mul(4*",0 );
+    ( "mul(6,9!",0 );
+    ( "?(12,34)",0 );
+    ( "mul ( 2 , 4 )",0 );
+    ( testCase,161 );
+  ]
+let calcTotal listOfPairs = listOfPairs |> List.fold_left (fun acc (x,y)-> acc + (x * y) ) 0 
+  let runTest x = let expr, expected = x in let a = (( calcTotal (findMultStrs expr) ) = expected ) in let () = assert a in a
+  let runTests  = map runTest testLists
+  let part1 stringIn = stringIn |> findMultStrs
+  let fileParsed = fullFileStr |> part1
+  let () = p "Main:"; p "Part 1:"; p (string_of_int ( fileParsed |> calcTotal));
