@@ -67,7 +67,7 @@ let getLastDigit str =
 let sti = string_of_int
 let genPair x y =("("^ sti x   ^ "," ^  sti y  ^ ")") 
 let pPair x y = p (genPair x y)     
-let findMultStrs str = let expl = explode str in
+let findMultStrs str = 
   let rec findCandidates acc strLeft =
     match strLeft with 
     | [] -> acc
@@ -80,8 +80,7 @@ let findMultStrs str = let expl = explode str in
             | (None,rest) -> findCandidates acc rest) 
         | (_,rest) -> findCandidates acc rest ) 
     | arb :: rest -> findCandidates acc rest
-  in findCandidates [] expl
-
+  in findCandidates []  str 
 let testCase = "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))"
 let fullFileStr = file |> entireFile 
 let testLists =
@@ -94,7 +93,31 @@ let testLists =
   ]
 let calcTotal listOfPairs = listOfPairs |> List.fold_left (fun acc (x,y)-> acc + (x * y) ) 0 
   let runTest x = let expr, expected = x in let a = (( calcTotal (findMultStrs expr) ) = expected ) in let () = assert a in a
-  let runTests  = map runTest testLists
+  let runTests  = map runTest (map (fun (x,y) -> (explode x, y)) testLists)
   let part1 stringIn = stringIn |> findMultStrs
-  let fileParsed = fullFileStr |> part1
-  let () = p "Main:"; p "Part 1:"; p (string_of_int ( fileParsed |> calcTotal));
+  let fileParsed = fullFileStr |> explode |> part1
+let () = p "Main:"; p "Part 1:"; p (string_of_int ( fileParsed |> calcTotal));;
+
+
+  let part2 stringIn =
+      let rec tokenize accString accPairs doState parsing = 
+      (
+        match parsing with 
+        | 'd' :: 'o' :: '(' :: ')' :: rest when doState = false -> tokenize accString accPairs true rest 
+        | 'd' :: 'o' ::'n'::'\'' :: 't' :: '(' :: ')' :: rest  when doState = true -> 
+            let newPairs = findMultStrs accString in
+              tokenize [] ( accPairs @ newPairs ) false rest 
+        | someChar :: rest -> 
+            if doState = false then tokenize accString accPairs doState rest
+            else tokenize (accString @ [ someChar ]) accPairs doState rest
+        | [] -> 
+            let newPairs = findMultStrs accString in 
+              (accPairs @ newPairs) 
+      )
+      in tokenize [] [] true stringIn
+
+
+let fileParsed2 = fullFileStr |> explode |> part2
+let p1L = List.length fileParsed
+let p2L = List.length fileParsed2
+let () = p "Main:"; p "Part 2:"; p (string_of_int ( fileParsed2 |> calcTotal));;
