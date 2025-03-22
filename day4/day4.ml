@@ -82,6 +82,10 @@ type directions =
   | South
   | East  
   | West
+  | NorthEast
+  | NorthWest 
+  | SouthEast
+  | SouthWest
 
 let dirToCoords dirIn =
   match dirIn with
@@ -89,6 +93,11 @@ let dirToCoords dirIn =
     | South -> (0,-1)
     | West -> (1,0)
     | East -> (-1,0)
+
+    | NorthEast -> (-1,1)
+    | NorthWest -> (1,1)
+    | SouthEast -> (-1,-1)
+    | SouthWest -> (1,-1)
 
 let itr_dir dir pos = 
   let p_x,p_y = pos in 
@@ -106,6 +115,30 @@ let acc_list_in_dir (dir:directions) size arr curr_pos  =
         | Some(a) -> 
           (accList dir ((-) remainder 1) arr (itr_in_dir curr_pos) (a @ acc ) ))
   in accList dir size arr curr_pos []
+let matchLists equalityFn ( list_a: 'a list ) ( list_b: 'a list ) =
+  if (List.compare_lengths list_a list_b) = 0 
+    then ( List.equal (equalityFn) list_a list_b ) 
+  else false
+let matchShallowLists = matchLists (=)
+let getBounds doubleArr = 
+  let x = Array.length doubleArr in
+  let y = Array.length doubleArr.(0) in
+  (x,y)
+
+let dirList = 
+  [|
+    North;
+    NorthEast;NorthWest;
+    South;
+    SouthEast;SouthWest;
+    East;
+    South; 
+  |]
+
+let applyAcrossDir arr_2D pos appliedFunc =
+  Array.iter (fun dir -> appliedFunc dir )
+
+
 (* End : Functions Added Since*)
 (* end standard *)
 
@@ -127,8 +160,15 @@ let validSequence = "XMAS"
 let expSeq = explode validSequence
 
 (*Part 1 start*)
-
-  
+let wordSearch wordSearchTable strIn = (*This function assumes that the word is NOT a palindrome - if it is you would have to divide the amount of matches by 2*)
+  let wordsFound = ref 0 in
+  let xpStr = explode strIn in
+  let xBound,yBound = getBounds wordSearchTable in
+  for x = 0 to  xBound-1 do
+    for y = 0 to  yBound-1 do
+       
+    done
+  done
 
 
 
