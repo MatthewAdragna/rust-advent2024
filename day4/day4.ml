@@ -40,18 +40,73 @@ let printFlatIntList = (printFlatListFunct string_of_int)
 let intlist_of_str strIn = String.split_on_char ' ' strIn |> map int_of_string 
 
 let linesToIntList2 (l:  string list) = map intlist_of_str l
-let charListAreDigits chrList = chrList |> map (fun x -> 
-  match x with 
+let charIsDigit charIn =   match charIn with 
   | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' -> true
   | _ -> false
-)  
-  |> List.fold_left (&&) true
+let charListAreDigits chrList = chrList |> map charIsDigit |> List.fold_left (&&) true
 let explode s =
   let rec expl i l =
     if i < 0 then l else
       expl (i - 1) (s.[i] :: l) in
   expl (String.length s - 1) [];;
 let implode l =  String.concat "" (map ( String.make 1 ) l )
+(* Start : Functions Added Since*)
+let rec list_get_index_single ind arr = if ind < 0 then None else 
+    match arr with 
+    | elem :: rest ->
+      if ind = 0 then Some (elem)
+      else list_get_index_single (( - ) ind 1) rest 
+    | [] -> None
+    
+let list_get_index_pos (x,y) arr =
+    match list_get_index_single x arr with
+        | None -> None
+        | Some(a) -> list_get_index_single y a
+
+let linesSplitArr f= 
+  let channel = In_channel.with_open_bin f In_channel.input_all
+  in String.split_on_char '\n' channel 
+  |> List.filter (fun x ->(String.length (String.trim x) ) >= 1) 
+  |> map (fun x -> Array.of_list (explode x)) |> Array.of_list
+
+let getIndArr arr index =
+  if index >= 0 && index < Array.length arr then Some( arr.(index )) else None
+
+let getPosArr arr (x,y)  =
+    match getIndArr arr x with
+    | None -> None
+    | Some(a) -> getIndArr a y
+
+type directions =
+  | North
+  | South
+  | East  
+  | West
+
+let dirToCoords dirIn =
+  match dirIn with
+    | North -> (0,1)
+    | South -> (0,-1)
+    | West -> (1,0)
+    | East -> (-1,0)
+
+let itr_dir dir pos = 
+  let p_x,p_y = pos in 
+  let d_x,d_y = dirToCoords dir in
+  (((+) p_x d_x),((+) p_y d_y))
+
+let acc_list_in_dir (dir:directions) size arr curr_pos  = 
+  let getPos = getPosArr arr in
+  let itr_in_dir = itr_dir dir in
+  if size <=0 then None else
+    let rec accList dir remainder arr curr_pos ( acc: 'a list) =
+      ( if remainder = 0 then Some(acc) else 
+        match getPos (curr_pos) with
+        | None -> None 
+        | Some(a) -> 
+          (accList dir ((-) remainder 1) arr (itr_in_dir curr_pos) (a @ acc ) ))
+  in accList dir size arr curr_pos []
+(* End : Functions Added Since*)
 (* end standard *)
 
 let given_case =
@@ -68,10 +123,33 @@ MAMMMXMMMM
 MXMXAXMASX
 |}
 
-let testCases = [
+let validSequence = "XMAS"
+let expSeq = explode validSequence
 
+(*Part 1 start*)
+
+  
+
+
+
+(*Part 1 end*)
+
+
+
+
+
+
+
+
+
+
+let testCases = [
   (given_case,18);
 ] 
+
+
+
+
 
 
 
