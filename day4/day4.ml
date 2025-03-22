@@ -53,3 +53,26 @@ let explode s =
   expl (String.length s - 1) [];;
 let implode l =  String.concat "" (map ( String.make 1 ) l )
 (* end standard *)
+
+let given_case =
+  {|
+MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX
+|}
+
+let testCases = [
+
+  (given_case,18);
+] 
+
+
+
+
