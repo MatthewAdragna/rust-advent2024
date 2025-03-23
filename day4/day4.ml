@@ -63,11 +63,17 @@ let list_get_index_pos (x,y) arr =
         | None -> None
         | Some(a) -> list_get_index_single y a
 
-let linesSplitArr f= 
-  let channel = In_channel.with_open_bin f In_channel.input_all
-  in String.split_on_char '\n' channel 
+
+let string_split_arr string = 
+     string
+  |> String.split_on_char '\n'  
   |> List.filter (fun x ->(String.length (String.trim x) ) >= 1) 
   |> map (fun x -> Array.of_list (explode x)) |> Array.of_list
+
+
+let linesSplitArr f= 
+     In_channel.with_open_bin f In_channel.input_all
+  |> string_split_arr
 
 let getIndArr arr index =
   if index >= 0 && index < Array.length arr then Some( arr.(index )) else None
@@ -113,7 +119,7 @@ let acc_list_in_dir (dir:directions) size arr curr_pos  =
         match getPos (curr_pos) with
         | None -> None 
         | Some(a) -> 
-          (accList dir ((-) remainder 1) arr (itr_in_dir curr_pos) (a @ acc ) ))
+          (accList dir ((-) remainder 1) arr (itr_in_dir curr_pos) ([a] @ acc ) ))
   in accList dir size arr curr_pos []
 let matchLists equalityFn ( list_a: 'a list ) ( list_b: 'a list ) =
   if (List.compare_lengths list_a list_b) = 0 
@@ -135,8 +141,6 @@ let dirList =
     South; 
   |]
 
-let applyAcrossDir arr_2D pos appliedFunc =
-  Array.iter (fun dir -> appliedFunc dir )
 
 
 (* End : Functions Added Since*)
@@ -156,22 +160,44 @@ MAMMMXMMMM
 MXMXAXMASX
 |}
 
+
+let tests = 
+  [
+    (given_case,18);
+    (
+{|
+XMAS
+PPPP
+PPPP
+PPPP
+|},1)
+  ]
+
 let validSequence = "XMAS"
 let expSeq = explode validSequence
 
 (*Part 1 start*)
-let wordSearch wordSearchTable strIn = (*This function assumes that the word is NOT a palindrome - if it is you would have to divide the amount of matches by 2*)
+let wordSearch  strIn wordSearchTable= (*This function assumes that the word is NOT a palindrome - if it is you would have to divide the amount of matches by 2*)
+  let strLen = String.length strIn in
   let wordsFound = ref 0 in
   let xpStr = explode strIn in
   let xBound,yBound = getBounds wordSearchTable in
   for x = 0 to  xBound-1 do
     for y = 0 to  yBound-1 do
-       
-    done
-  done
+      Array.iter (fun dir-> match acc_list_in_dir dir strLen wordSearchTable (x,y) 
+      with 
+      | None -> ()
+        | Some(a) -> 
+          if ( matchShallowLists a xpStr ) then 
+            wordsFound := !wordsFound + 1 ;() 
+      ) dirList;
+done
+  done;
+  !wordsFound
 
+let testCases = map  (fun (x,y ) -> wordSearch  validSequence (string_split_arr x )) tests
 
-
+let part1 =   linesSplitArr file |> wordSearch validSequence 
 (*Part 1 end*)
 
 
