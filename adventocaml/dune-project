@@ -1,0 +1,28 @@
+(lang dune 3.17)
+
+(name adventocaml)
+
+(generate_opam_files true)
+
+(source
+ (github MatthewAdragna/rust-advent2024))
+
+(authors "Matthew Adragna <matthewjadragna@gmail.com>")
+
+
+(license MIT)
+
+; (package
+ ; (name adventocaml)
+ ; (synopsis "Advent of Code done using OCaml")
+ ; (description 
+ ;   "Used OCaml to complete various Advent of Code challenges - Advent of code can be found at https://adventofcode.com/ -> Code created solely by Matthew Adragna, AI tools were used only as assistance for syntax and finding useful functions (a manual you can chat with)"
+ ; )
+ ; ; (allow_empty)
+ ; (depends ocaml)
+ ; (tags
+ ;  ("OCaml" "Advent of Code")
+ ;  ) 
+ ; )
+
+; See the complete stanza docs at https://dune.readthedocs.io/en/stable/reference/dune-project/index.html

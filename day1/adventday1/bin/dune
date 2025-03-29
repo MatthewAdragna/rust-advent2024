@@ -1,6 +1,0 @@
- (executable
-   (public_name adventday1)
-   (name main)
-   (libraries adventday1)
- )
- 
