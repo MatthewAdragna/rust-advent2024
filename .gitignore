@@ -2,3 +2,5 @@
 **/_build/
 .cookie
 *.o
+*.cookie
+*/_input/

@@ -1,4 +1,4 @@
-(* module AdventStd = struct *)
+module Common = struct
 (* # Begin standard *)
     let flatten_tailed (list_in:'a list list )=
     let rec aux l acc =
@@ -143,4 +143,4 @@
 
 
     (* End : Functions Added Since*)
-(* end *)
+end

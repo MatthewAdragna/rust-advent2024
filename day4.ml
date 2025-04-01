@@ -1,6 +1,6 @@
 
 (* end standard *)
-open AdventStd
+open AdventStd.Common
 let given_case =
   {|
 MMMSXXMASM
@@ -40,7 +40,7 @@ let wordSearch  strIn wordSearchTable= (*This function assumes that the word is 
     for y = 0 to  yBound-1 do
       Array.iter (fun dir-> match acc_list_in_dir dir strLen wordSearchTable (x,y) 
       with 
-      | None -> ()
+        | None -> ()
         | Some(a) -> 
           if ( matchShallowLists a xpStr ) then 
             wordsFound := !wordsFound + 1 ;() 
