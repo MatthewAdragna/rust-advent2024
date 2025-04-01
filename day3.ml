@@ -23,7 +23,7 @@ let printStrArr arrIn =
     Printf.printf "[%i :%s]" i arrIn.(i)
   done
 
-let default_file = "input"
+let default_file = "./_input/day03.txt"
 
 let file = if Array.length Sys.argv >=2  then Sys.argv.(1) else default_file
 

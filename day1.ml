@@ -1,6 +1,6 @@
 let validArguments = (Array.length Sys.argv) >= 2
 
-let filePath = if validArguments then  Sys.argv.(1) else "../../../source/input"
+let filePath = if validArguments then  Sys.argv.(1) else "./_input/day01.txt"
 
 let wsTuple x = [" " ^ x] 
 let  printTuples tuplesIn =

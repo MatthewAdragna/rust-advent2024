@@ -24,9 +24,9 @@ module Common = struct
         Printf.printf "[%i :%s]" i arrIn.(i)
       done
 
-    let default_file = "input"
+    let get_default_file x= Printf.sprintf "_input/day%02d.txt" x
 
-    let file num = if Array.length Sys.argv >=2  then Sys.argv.(1) else ( default_file ^ (string_of_int num) )
+    let file num = if Array.length Sys.argv >=2  then Sys.argv.(1) else (get_default_file num)
     let elemFormat conversion intIn = 
       let strout = conversion intIn  
       in strout ^ ";"
@@ -114,12 +114,12 @@ module Common = struct
       let itr_in_dir = itr_dir dir in
       if size <=0 then None else
         let rec accList dir remainder arr curr_pos ( acc: 'a list) =
-          ( if remainder = 0 then Some(acc) else 
+          ( if remainder = 0 then Some(acc |> List.rev) else 
             match getPos (curr_pos) with
             | None -> None 
             | Some(a) -> 
               (accList dir ((-) remainder 1) arr (itr_in_dir curr_pos) ([a] @ acc ) ))
-      in accList dir size arr curr_pos []
+      in accList dir size arr curr_pos [] 
     let matchLists equalityFn ( list_a: 'a list ) ( list_b: 'a list ) =
       if (List.compare_lengths list_a list_b) = 0 
         then ( List.equal (equalityFn) list_a list_b ) 

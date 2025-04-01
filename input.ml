@@ -26,7 +26,7 @@ let download_input day =
     Header.init () |> fun h ->
     Header.add h "Cookie" cookie |> fun h ->
     Header.add h "User-Agent"
-      "Input download script by https://github.com/veeenu"
+      "Input Download Script by Veenu Used By MatthewAdragna"
   in
   Client.get ~headers (input_url day) >>= fun (_resp, body) ->
   Cohttp_lwt.Body.to_string body >>= fun body -> save_input day body
