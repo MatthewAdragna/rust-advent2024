@@ -1,6 +1,6 @@
+
+open Re
 open AdventStd.Common
-
-
 let given_case = 
 {|47|53
 97|13
@@ -31,8 +31,10 @@ let given_case =
 61,13,29
 97,13,75,29,47
 |}
+let parseRules lineIn = 
+  let rec parseHelper acc lineCurr
 
+let p5parser linesIn = 
+  
 
-
-
-
+let inputFile = file 5 |> linesSplit |> p5parser

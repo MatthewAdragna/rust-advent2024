@@ -11,6 +11,6 @@
 (executable (name day2 )(modules Day2))
 (executable (name day3 )(modules Day3))
 (executable (name day4 )(modules Day4 AdventStd) )
-(executable (name day5 )(modules Day5 AdventStd) )
+(executable (name day5 )(modules Day5 AdventStd) (libraries re ))
 ; (executable (name day1 ))
 
