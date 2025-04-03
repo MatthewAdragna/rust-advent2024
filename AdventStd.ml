@@ -92,18 +92,39 @@ module Common = struct
       | SouthEast
       | SouthWest
 
+    let dirStr dirIn= 
+      match dirIn with
+        | North -> "North" 
+        | South -> "South" 
+        | West -> "West" 
+        | East -> "East"
+        | NorthEast -> "NorthEast" 
+        | NorthWest -> "NorthWest" 
+        | SouthEast -> "SouthEast" 
+        | SouthWest -> "SouthWest" 
+
     let dirToCoords dirIn =
       match dirIn with
         | North -> (0,1)
         | South -> (0,-1)
         | West -> (1,0)
         | East -> (-1,0)
-
         | NorthEast -> (-1,1)
         | NorthWest -> (1,1)
         | SouthEast -> (-1,-1)
         | SouthWest -> (1,-1)
 
+    let dirOpp dirIn  =
+    match dirIn with
+        | North -> South 
+        | South -> North 
+        | West ->  East 
+        | East -> West 
+        | NorthEast -> SouthWest 
+        | NorthWest -> SouthEast 
+        | SouthEast -> NorthWest 
+        | SouthWest -> NorthEast 
+      
     let itr_dir dir pos = 
       let p_x,p_y = pos in 
       let d_x,d_y = dirToCoords dir in
@@ -120,6 +141,7 @@ module Common = struct
             | Some(a) -> 
               (accList dir ((-) remainder 1) arr (itr_in_dir curr_pos) ([a] @ acc ) ))
       in accList dir size arr curr_pos [] 
+
     let matchLists equalityFn ( list_a: 'a list ) ( list_b: 'a list ) =
       if (List.compare_lengths list_a list_b) = 0 
         then ( List.equal (equalityFn) list_a list_b ) 
@@ -132,14 +154,12 @@ module Common = struct
 
     let dirList = 
       [|
-        North;
+        North;South;
+        East;West;
         NorthEast;NorthWest;
-        South;
         SouthEast;SouthWest;
-        East;
-        South; 
       |]
-
+    let enumerateArr arr = Array.mapi (fun i x -> (i,x)) arr
 
 
     (* End : Functions Added Since*)
