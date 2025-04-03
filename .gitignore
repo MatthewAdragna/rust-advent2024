@@ -3,4 +3,4 @@
 .cookie
 *.o
 *.cookie
-*/_input/
+**/_input/
